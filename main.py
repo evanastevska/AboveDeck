@@ -118,13 +118,32 @@ def get_page_text(title):
 def save_page(title, text, out_dir="corpus"):
     """
     Write one page's text to disk as a .txt file.
-    (Metadata like season/episode you can parse from the title in a later step.)
+    (Metadata like season/episode can parse from the title in a later step.)
 
     TODO:
       - Path(out_dir).mkdir(parents=True, exist_ok=True)
       - make a safe filename (spaces and slashes in titles break paths)
       - write the text
     """
+
+    safe_title = title.replace(" ", "_").replace("/", "-").replace("'", "")
+
+    out_dir = Path(out_dir) #turns folder into a Path object and stores it
+    out_dir.mkdir(parents=True, exist_ok=True) #makes directory
+
+    filepath = out_dir / f"{safe_title}.txt"
+
+    #with means open file, do thing, close
+    #w means write mode (creates file or overwrites if exists)
+    with open(filepath, "w", encoding="utf-8") as f:
+        f.write(text)
+
+
+text = get_page_text("Below Deck Mediterranean Season 2")
+save_page("Below Deck Mediterranean Season 2", text)
+
+
+
     
     
 
