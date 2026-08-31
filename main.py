@@ -139,8 +139,25 @@ def save_page(title, text, out_dir="corpus"):
         f.write(text)
 
 
-text = get_page_text("Below Deck Mediterranean Season 2")
-save_page("Below Deck Mediterranean Season 2", text)
+
+def main():
+    list = []
+    for n in range(1, 13):
+        list.append(f"Below Deck Season {n}")
+
+    for n in range(1, 11):
+        list.append(f"Below Deck Mediterranean Season {n}")
+
+    for title in list:
+        text = get_page_text(title)  
+        save_page(title, text)
+        print(f"Saved: {title}")
+
+    #note: Med S10 and BD S12 were mid-air at scrape time, so they r sparse
+
+
+if __name__ == "__main__":
+    main()
 
 
 
