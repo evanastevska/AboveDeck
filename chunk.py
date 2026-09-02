@@ -121,18 +121,7 @@ def main():
     files = corpus_dir.glob("*.txt") #glob=give me everything ending in .txt
     #each item comes back is a Path obj NOT str
 
-
     records_pages_list = [] #list to collect records from ALL pages
-
-
-    # TODO: loop over each file. For each one:
-    #         - read its text off disk (read_text, utf-8!)
-    #         - get the filename (file.name) and pass it to metadata_for_file
-    #         - call chunk_page(text, metadata, chunk_size, overlap)
-    #         - add those records to your all-pages list
-    #           (hint: to merge a list into another list, .extend() adds each
-    #            item; .append() would nest the whole list as one element —
-    #            you want extend here)
 
     chunk_size=800
     overlap=100
@@ -144,20 +133,14 @@ def main():
         records_pages_list.extend(record_page_list)
 
 
-    # TODO: pick your chunk_size and overlap. For the baseline, something like
-    #       chunk_size=800, overlap=100 is reasonable. These are your ablation
-    #       knobs later — fine to hardcode here for now.
+    #print(f"total records: {len(records_pages_list)}")
+    #for r in records_pages_list[:3]:
+    #    print(r)
 
+    #for r in records_pages_list:
+    #    if r["source_page"] in ("Below_Deck_Mediterranean_Season_10.txt", "Below_Deck_Season_12.txt"):
+    #        print(r["chunk_id"], len(r["text"]))
 
-    # TODO: eyeball — print how many records total, then print the first 2-3
-    #       records so you can SEE real chunks. Look at:
-    #         - is the metadata attached right?
-    #         - do the chunk_ids look right?
-    #         - what does raw wikitext actually look like chunked? (markup like
-    #           {{ }} and [[ ]] mid-chunk is EXPECTED — you didn't clean it)
-
-
-    # TODO: return the all-pages list.
     return records_pages_list
 
 
