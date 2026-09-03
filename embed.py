@@ -21,12 +21,11 @@ def token_sanity_check(records, model):
 
     why:
       all-MiniLM-L6-v2 only reads the first ~256 tokens of an input and silently
-      drops the rest. chunks are sized in CHARS (800), not tokens, and
-      your text is markup-heavy. so a chunk could slip over 256.
+      drops the rest. chunks are sized in CHARS (800), not tokens, and text is markup-heavy. so a chunk could slip over 256.
 
       - for every record, count how many tokens its "text" becomes
-      - track the largest count seen (and ideally which chunk_id it was)
-      - print that max next to the model's own limit, so you see the headroom
+      - track the largest count seen (and which chunk_id it was)
+      - print that max next to the model's own limit, so see the headroom
 
     """
 
@@ -64,32 +63,31 @@ def build_store(records, model):
     Returns:
         the Chroma collection, so the caller can query it.
 
-    The one real bit of thinking: Chroma's `add` does NOT take your list of dicts.
-    It takes several PARALLEL lists, aligned by position — ids, embeddings,
-    documents, metadatas. So your job is to unpack your records into those aligned
-    lists, embed the documents, and hand all four over together.
+    Chroma takes PARALLEL lists, so need to unpack records into aligned
+    lists, then embed the documents, then hand all four over together.
     """
-    # TODO: build three parallel lists from `records`, IN THE SAME ORDER:
-    #   ids        -> each record's chunk_id
-    #   documents  -> each record's text
-    #   metadatas  -> a NEW dict per record with ONLY show / season / source_page
-    #                 (NOT text — that's the document; NOT chunk_id — that's the id)
-    #   Build them in one pass so the three stay index-aligned.
 
-    # TODO: embed the `documents` list in ONE call (model.encode batches for you).
-    #   It returns a numpy array; Chroma's add wants plain lists (look at .tolist()).
+    ids = []
+    documents = []
+    metadatas = []
 
-    # TODO: create a persistent Chroma client that writes to a folder on disk.
-    #   Look up chromadb.PersistentClient — give it a path (that folder is what you
-    #   gitignore).
+    for record in records:
+        ids.append(record["chunk_id"])
+        documents.append(record["text"])
+        metadatas.append({"source_page": record["source_page"], "show": record["show"], "season":record["season"]})
 
-    # TODO: get-or-create a collection. Chroma defaults to L2, NOT cosine — to use
-    #   cosine you pass metadata={"hnsw:space": "cosine"} when you create it.
+    embeddings = model.encode(documents).tolist()
 
-    # TODO: add everything in one call — the four aligned lists.
+    #persistent Chroma client that writes to folder on disk
+    client = chromadb.PersistentClient(path="chroma_store")
 
-    # TODO: return the collection.
-    pass
+    #unit of storage and querying, acts as a container that groups related to embeddings, docs, metadata, ids
+    #also called collection
+    chunks = client.get_or_create_collection(name="chunks",metadata={"hnsw:space": "cosine"})
+
+    chunks.add(ids=ids, documents=documents, metadatas=metadatas, embeddings=embeddings)
+
+    return chunks
 
 
 def query_test(collection, model, query_text, k=5, season=None):
@@ -104,11 +102,12 @@ def query_test(collection, model, query_text, k=5, season=None):
         k:          how many hits to return
         season:     if given, restrict the search to that season (metadata filter)
 
-    This is your proof the store works: do the hits look relevant, and does the
+    This is for proof the store works: do the hits look relevant, and does the
     season filter actually narrow them?
     """
     # TODO: embed query_text the same way you embedded chunks. You'll hand it to
     #   Chroma as a LIST (one query), so shape it accordingly.
+    
 
     # TODO: call collection.query(...). Arguments you'll use:
     #     query_embeddings = [ your query vector ]
@@ -140,6 +139,8 @@ def main():
     records = chunk.main()
     model = SentenceTransformer('sentence-transformers/all-MiniLM-L6-v2')
     token_sanity_check(records, model)
+
+    collection = build_store(records, model)
 
 
 if __name__ == "__main__":
