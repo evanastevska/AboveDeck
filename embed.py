@@ -34,7 +34,7 @@ def token_sanity_check(records, model):
     max_count = 0
     biggest_chunk_id = None
 
-    counter = 0
+    counter = 0 #how many of the 258 chunks land over 266 token limit
 
     for record in records:
         curr_count = len(model.tokenizer.encode(record["text"])) #number of tokens in this record's text
@@ -49,8 +49,8 @@ def token_sanity_check(records, model):
     print(biggest_chunk_id)
     print(model_max)
     print(counter)
-            
-    
+
+
 
 
 def build_store(records, model):
@@ -59,7 +59,7 @@ def build_store(records, model):
 
     Args:
         records: the 258 chunk dicts (each has chunk_id, text, show, season, source_page)
-        model:   the already-loaded SentenceTransformer
+        model:   the alr-loaded SentenceTransformer
 
     Returns:
         the Chroma collection, so the caller can query it.
@@ -69,15 +69,23 @@ def build_store(records, model):
     documents, metadatas. So your job is to unpack your records into those aligned
     lists, embed the documents, and hand all four over together.
     """
-    # TODO: build three parallel lists from `records`, IN THE SAME ORDER:
-    #   ids        -> each record's chunk_id
-    #   documents  -> each record's text
-    #   metadatas  -> a NEW dict per record with ONLY show / season / source_page
-    #                 (NOT text — that's the document; NOT chunk_id — that's the id)
-    #   Build them in one pass so the three stay index-aligned.
+    #build three parallel lists from records, in same order:
+    #ids-> each record's chunk_id
+    #documents-> each record's text
+    #metadatas-> a new dict per record w ONLY show / season / source_page
+
+    ids = []
+    documents = []
+    metadatas = []
+    for record in records:
+        ids.append(record["chunk_id"])
+        documents.append(record["text"])
+        metadatas.append({"source_page": record["source_page"], "show": record["show"], "season":record["season"]})
+
 
     # TODO: embed the `documents` list in ONE call (model.encode batches for you).
     #   It returns a numpy array; Chroma's add wants plain lists (look at .tolist()).
+
 
     # TODO: create a persistent Chroma client that writes to a folder on disk.
     #   Look up chromadb.PersistentClient — give it a path (that folder is what you
@@ -136,7 +144,7 @@ def main():
     # TODO: collection = build_store(records, model)
     # TODO: query_test(collection, model, "who quit as chef?", k=5)            # plain
     # TODO: query_test(collection, model, "who quit as chef?", k=5, season=3)  # filtered
-    
+
     records = chunk.main()
     model = SentenceTransformer('sentence-transformers/all-MiniLM-L6-v2')
     token_sanity_check(records, model)
