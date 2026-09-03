@@ -33,7 +33,7 @@ def token_sanity_check(records, model):
     max_count = 0
     biggest_chunk_id = None
 
-    counter = 0
+    counter = 0 #how many of the 258 chunks land over 266 token limit
 
     for record in records:
         curr_count = len(model.tokenizer.encode(record["text"])) #number of tokens in this record's text
@@ -48,8 +48,8 @@ def token_sanity_check(records, model):
     print(biggest_chunk_id)
     print(model_max)
     print(counter)
-            
-    
+
+
 
 
 def build_store(records, model):
@@ -58,7 +58,7 @@ def build_store(records, model):
 
     Args:
         records: the 258 chunk dicts (each has chunk_id, text, show, season, source_page)
-        model:   the already-loaded SentenceTransformer
+        model:   the alr-loaded SentenceTransformer
 
     Returns:
         the Chroma collection, so the caller can query it.
@@ -135,7 +135,7 @@ def main():
     # TODO: collection = build_store(records, model)
     # TODO: query_test(collection, model, "who quit as chef?", k=5)            # plain
     # TODO: query_test(collection, model, "who quit as chef?", k=5, season=3)  # filtered
-    
+
     records = chunk.main()
     model = SentenceTransformer('sentence-transformers/all-MiniLM-L6-v2')
     token_sanity_check(records, model)
