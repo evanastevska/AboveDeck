@@ -76,7 +76,7 @@ def build_store(records, model):
         documents.append(record["text"])
         metadatas.append({"source_page": record["source_page"], "show": record["show"], "season":record["season"]})
 
-    embeddings = model.encode(documents).tolist()
+    chunk_embeddings = model.encode(documents).tolist()
 
     #persistent Chroma client that writes to folder on disk
     client = chromadb.PersistentClient(path="chroma_store")
@@ -85,7 +85,7 @@ def build_store(records, model):
     #also called collection
     chunks = client.get_or_create_collection(name="chunks",metadata={"hnsw:space": "cosine"})
 
-    chunks.add(ids=ids, documents=documents, metadatas=metadatas, embeddings=embeddings)
+    chunks.add(ids=ids, documents=documents, metadatas=metadatas, embeddings=chunk_embeddings)
 
     return chunks
 
@@ -105,42 +105,42 @@ def query_test(collection, model, query_text, k=5, season=None):
     This is for proof the store works: do the hits look relevant, and does the
     season filter actually narrow them?
     """
-    # TODO: embed query_text the same way you embedded chunks. You'll hand it to
-    #   Chroma as a LIST (one query), so shape it accordingly.
+    #embed query_text. hand it to Chroma as a LIST (one query)
+    query_embedding = model.encode([query_text]).tolist()
     
+    query_args = {
+        "query_embeddings": query_embedding,
+        "n_results": k
+    }
+    if season is not None:
+        query_args["where"] = {"season": season}
 
-    # TODO: call collection.query(...). Arguments you'll use:
-    #     query_embeddings = [ your query vector ]
-    #     n_results        = k
-    #     where            = {"season": season}   <-- ONLY when season is not None
-    #   (build the call so the filter is included only when a season was passed.)
+    results = collection.query(**query_args)
 
-    # TODO: the result is a dict; each field (documents, metadatas, distances) comes
-    #   back nested one level deep — a list-of-lists, one inner list per query. You
-    #   sent ONE query, so take [0] of each to get this query's hits.
+    #the result is a dict; each field (documents, metadatas, distances) comes
+    #back nested one level deep — a list-of-lists, one inner list per query. You
+    #sent ONE query, so take [0] of each to get this query's hits.
+    docs = results["documents"][0]
+    metas = results["metadatas"][0]
+    dists = results["distances"][0]
 
-    # TODO: loop the hits and print, per hit:
-    #     - the distance (Chroma cosine distance: LOWER = closer / more similar)
-    #     - show + season from the metadata
-    #     - the first ~150 chars of the document, to eyeball relevance
-    pass
+    for doc, meta, dist in zip(docs, metas, dists):
+        print(dist)
+        print(meta["show"])
+        print(meta["season"])
+        print(doc[:150])
 
 
 def main():
     """Run the whole embedding step end to end."""
-    # TODO: model_name = "all-MiniLM-L6-v2"
-    # TODO: records = ...     # your chunking module returns the list — use it
-    # TODO: model   = ...     # construct the SentenceTransformer ONCE (loading is slow)
-    # TODO: token_sanity_check(records, model)
-    # TODO: collection = build_store(records, model)
-    # TODO: query_test(collection, model, "who quit as chef?", k=5)            # plain
-    # TODO: query_test(collection, model, "who quit as chef?", k=5, season=3)  # filtered
 
     records = chunk.main()
     model = SentenceTransformer('sentence-transformers/all-MiniLM-L6-v2')
     token_sanity_check(records, model)
 
     collection = build_store(records, model)
+    query_test(collection, model, "who quit as chef?", k=5)          
+    query_test(collection, model, "who quit as chef?", k=5, season=3)  # filtered
 
 
 if __name__ == "__main__":
