@@ -93,26 +93,3 @@ def generate(query_text, retrieved, client, model_name):
     )
 
     return response.text
-
-def main():
-    """Run the generating answer step."""
-
-    load_dotenv()
-
-    api_key = os.getenv("GOOGLE_API_KEY")
-
-    client = genai.Client(api_key=api_key)
-    records = chunk.main()
-    model = SentenceTransformer('sentence-transformers/all-MiniLM-L6-v2')
-    collection = embed.build_store(records, model)
-
-    query_text = "In what season does Jax cheat on Stassi?"
-
-    result = retrieve(collection, model, query_text, k=5, season=None)
-
-    response = generate(query_text, result, client, model_name="gemini-3.6-flash")
-    print(response)
-
-
-if __name__ == "__main__":
-    main()

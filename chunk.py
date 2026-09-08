@@ -108,14 +108,14 @@ def chunk_page(text, metadata, chunk_size, overlap):
     return record_page_list
 
 
-def main():
+def build_records():
     """
     Chunk every file in corpus/ into records, then print a few to eyeball.
 
     Returns:
         list[dict] — every chunk record from every page, all in one list
     """
-    # TODO: point at the corpus folder and grab all .txt files (glob).
+    #point at the corpus folder and grab all .txt files (glob).
 
     corpus_dir = Path("corpus")
     files = corpus_dir.glob("*.txt") #glob=give me everything ending in .txt
@@ -142,7 +142,3 @@ def main():
     #        print(r["chunk_id"], len(r["text"]))
 
     return records_pages_list
-
-
-if __name__ == "__main__":
-    main()
