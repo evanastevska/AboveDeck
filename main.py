@@ -4,7 +4,8 @@ from dotenv import load_dotenv
 
 import chunk
 import embed
-import rag
+import generate
+import retrieve
 from sentence_transformers import SentenceTransformer  #baseline model class
 
 def main():
@@ -22,9 +23,9 @@ def main():
 
     query_text = "In what season does Jax cheat on Stassi?"
 
-    result = rag.retrieve(collection, model, query_text, k=5, season=None)
+    result = retrieve.retrieve_dense(collection, model, query_text, k=5, season=None)
 
-    response = rag.generate(query_text, result, client, model_name="gemini-3.6-flash")
+    response = generate.generate(query_text, result, client, model_name="gemini-3.6-flash")
     print(response)
 
 
