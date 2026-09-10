@@ -108,7 +108,7 @@ def chunk_page(text, metadata, chunk_size, overlap):
     return record_page_list
 
 
-def build_records():
+def build_records(chunk_size, chunking_strategy):
     """
     Chunk every file in corpus/ into records, then print a few to eyeball.
 
@@ -123,8 +123,11 @@ def build_records():
 
     records_pages_list = [] #list to collect records from ALL pages
 
-    chunk_size=800
-    overlap=100
+    overlap = chunk_size // 8
+
+    if chunking_strategy != "fixed":
+        print("This strategy does not exist")
+        return []
 
     for file in files:
         text = file.read_text(encoding="utf-8") #read its text off disk
