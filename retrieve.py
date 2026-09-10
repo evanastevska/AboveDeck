@@ -1,6 +1,6 @@
 from rank_bm25 import BM25Okapi
 
-def retrieve_dense(collection, model, query_text, k=5, season=None):
+def retrieve_dense(collection, model, query_text, k=5, season=None, show=None):
     """
     Embed a question and RETURN the top-k hits for the next stage.
 
@@ -18,8 +18,15 @@ def retrieve_dense(collection, model, query_text, k=5, season=None):
         "query_embeddings": query_embedding,
         "n_results": k
     }
-    if season is not None:
-        query_args["where"] = {"season": season}
+    
+    
+    if season is not None and show is not None:
+        query_args["where"] = {"$and": [{"season": season}, {"show": show}]}
+    elif season is not None:
+            query_args["where"] = {"season": season}
+    elif show is not None:
+            query_args["where"] = {"show": show}
+
 
     results = collection.query(**query_args)
 
@@ -72,7 +79,7 @@ def build_bm25_index(records):
 
 
 
-def retrieve_bm25(bm25_index, records, query_text, k=5, season=None):
+def retrieve_bm25(bm25_index, records, query_text, k=5, season=None, show=None):
     """
     Score all chunks with BM25, optionally filter by season, return top-k.
 
@@ -116,8 +123,12 @@ def retrieve_bm25(bm25_index, records, query_text, k=5, season=None):
         scored_pairs.append((i, score))
 
     #filter by season if season is not None, so can throw out any chunks from other seasons if user asks abt a specific season
-    if season is not None:
+    if season is not None and show is not None:
+        filtered = [pair for pair in scored_pairs if records[pair[0]]["season"] == season and records[pair[0]]["show"] == show]
+    elif season is not None:
         filtered = [pair for pair in scored_pairs if records[pair[0]]["season"] == season]
+    elif show is not None:
+        filtered = [pair for pair in scored_pairs if records[pair[0]]["show"] == show]
     else:
         filtered = scored_pairs
 
@@ -139,7 +150,7 @@ def retrieve_bm25(bm25_index, records, query_text, k=5, season=None):
     return combined_list
 
 
-def retrieve_hybrid(collection, model, bm25_index, records, query_text, k=5, season=None, rrf_k=60):
+def retrieve_hybrid(collection, model, bm25_index, records, query_text, k=5, season=None, rrf_k=60, show=None):
     """
     Run both dense and BM25 retrieval, merge results with Reciprocal Rank Fusion.
 
@@ -177,8 +188,8 @@ def retrieve_hybrid(collection, model, bm25_index, records, query_text, k=5, sea
     both lists, it's the same chunk)
     """
 
-    ranked_results_dense = retrieve_dense(collection, model, query_text, k, season)
-    ranked_results_sparse = retrieve_bm25(bm25_index, records, query_text, k, season)
+    ranked_results_dense = retrieve_dense(collection, model, query_text, k, season, show)
+    ranked_results_sparse = retrieve_bm25(bm25_index, records, query_text, k, season, show)
 
     #a dict keyed by chunk text to accumulate RRF scores
     #for each chunk, store its meta so can return it later
