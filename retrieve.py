@@ -1,7 +1,8 @@
+from rank_bm25 import BM25Okapi
+
 def retrieve_dense(collection, model, query_text, k=5, season=None):
     """
     Embed a question and RETURN the top-k hits for the next stage.
-    Same retrieval as query_test, but hands data back instead of printing.
 
     Returns:
         list[dict], one per hit, carrying at least text + metadata
@@ -38,3 +39,184 @@ def retrieve_dense(collection, model, query_text, k=5, season=None):
 
     
     return combined_list
+
+
+
+def build_bm25_index(records):
+    """
+    Build a BM25 index from the chunk records.
+
+    Args:
+        records: the same list of chunk dicts that build_store() uses
+
+    Returns:
+        the fitted BM25Okapi index object
+
+    BM25Okapi wants a list of TOKENIZED documents, not raw strings.
+    Each "tokenized document" is a list of lowercase words.
+    Simplest tokenization: text.lower().split()
+
+    IMPORTANT: the index only knows documents by POSITION (0, 1, 2...).
+    It doesn't store your text or metadata. So the caller must keep
+    the original records list alongside the index, position i in the
+    index corresponds to records[i]. 
+    """
+    #pull the "text" out of each record and tokenize it
+    tokenized_text = [record["text"].lower().split() for record in records]
+
+    #build and return BM25Okapi from the tokenized list
+    bm25 = BM25Okapi(tokenized_text)
+
+    return bm25
+
+
+
+
+def retrieve_bm25(bm25_index, records, query_text, k=5, season=None):
+    """
+    Score all chunks with BM25, optionally filter by season, return top-k.
+
+    Args:
+        bm25_index: the index from build_bm25_index()
+        records:    the SAME records list (same order!) needed to look up
+                    text and metadata by position
+        query_text: the user's question (raw string)
+        k:          how many results to return
+        season:     if not None, only keep chunks matching this season
+
+    Returns:
+        list[dict]  same shape as retrieve_dense():
+            [{"doc": ..., "meta": ..., "dist": ...}, ...]
+
+        For "dist": BM25 returns SCORES (higher = more relevant),
+        which is the opposite of cosine DISTANCE (lower = more similar).
+        Store the score as-is just be aware it's not the same scale.
+
+    Steps:
+        1. Tokenize the query the same way you tokenized the docs
+        2. Get scores for ALL documents (bm25_index.get_scores())
+           returns one float per document, aligned with records
+        3. Pair each score with its index position so know which
+           record it belongs to
+        4. If season is not None, filter out entries whose record
+           doesn't match the season
+        5. Sort by score descending (highest = best match)
+        6. Take the top k
+        7. Build the same list-of-dicts format as retrieve_dense
+    """
+    #tokenize query_text (same way as build_bm25_index)
+    tokenized_query = query_text.lower().split()
+
+    #get_scores from the index
+    doc_scores = bm25_index.get_scores(tokenized_query)
+
+    #pair each score with its position
+    scored_pairs = []
+    for i, score in enumerate(doc_scores):
+        scored_pairs.append((i, score))
+
+    #filter by season if season is not None, so can throw out any chunks from other seasons if user asks abt a specific season
+    if season is not None:
+        filtered = [pair for pair in scored_pairs if records[pair[0]]["season"] == season]
+    else:
+        filtered = scored_pairs
+
+    #sort descending by score (which is at index 1 of each tuple)
+    sorted_descending = sorted(filtered, key=lambda pair: pair[1], reverse=True)
+
+    #slice top k
+    top_k = sorted_descending[:k]
+
+    #build and return list
+
+    combined_list = []
+    for position, score in top_k:
+        doc = records[position]["text"]
+        meta = {"source_page": records[position]["source_page"], "show": records[position]["show"], "season":records[position]["season"]}
+
+        combined_list.append({"doc": doc, "meta": meta, "dist": score})
+
+    return combined_list
+
+
+def retrieve_hybrid(collection, model, bm25_index, records, query_text, k=5, season=None, rrf_k=60):
+    """
+    Run both dense and BM25 retrieval, merge results with Reciprocal Rank Fusion.
+
+    Args:
+        collection:  Chroma collection (for dense)
+        model:       SentenceTransformer (for dense)
+        bm25_index:  BM25Okapi index (for BM25)
+        records:     chunk records list (for BM25)
+        query_text:  the user's question
+        k:           how many results to return AFTER merging
+        season:      season filter (passed to both retrievers)
+        rrf_k:       RRF smoothing constant (default 60)
+
+    Returns:
+        list[dict] same shape: [{"doc": ..., "meta": ..., "dist": ...}, ...]
+        "dist" here is the RRF score (higher = more relevant).
+
+    How RRF works:
+        Each retriever returns a RANKED list. A chunk's rank is its position
+        in that list (rank 1 = best match, rank 2 = second best, etc.).
+
+        For each chunk that appears in EITHER list, compute:
+            rrf_score = sum of 1/(rrf_k + rank) across all lists it appears in
+
+        ex: a chunk is rank 2 in dense and rank 5 in BM25:
+            rrf_score = 1/(60+2) + 1/(60+5) = 1/62 + 1/65 ≈ 0.0315
+
+        A chunk that appears in BOTH lists gets two terms added.
+        A chunk that appears in only ONE list gets just one term.
+        then sort by rrf_score descending and take top k.
+
+    need a way to recognize "same chunk" across two lists.
+    Each result has a "doc" (the chunk text). can use that as the
+    dictionary key to accumulate scores (if the same text shows up in
+    both lists, it's the same chunk)
+    """
+
+    ranked_results_dense = retrieve_dense(collection, model, query_text, k, season)
+    ranked_results_sparse = retrieve_bm25(bm25_index, records, query_text, k, season)
+
+    #a dict keyed by chunk text to accumulate RRF scores
+    #for each chunk, store its meta so can return it later
+    #start at 1 because rank = 1 best
+    rrf_scores = {}
+    
+    for rank, chunk in enumerate(ranked_results_dense, start=1):
+        key = chunk["doc"]
+        if key not in rrf_scores:
+            # first time seeing this chunk, set initial score, store meta
+            rrf_scores[key] = {"score": 0.0, "meta": chunk["meta"]}
+        rrf_scores[key]["score"] += 1.0 / (rrf_k + rank)
+
+
+    #loop through BM25 results w RANK (same way)
+    #for each: compute 1/(rrf_k + rank), ADD to existing score
+    #(if it's already in the dict from dense, the scores accumulate
+    #that's how chunks in both lists get boosted)
+    for rank, chunk in enumerate(ranked_results_sparse, start=1):
+            key = chunk["doc"]
+            if key not in rrf_scores:
+                # first time seeing this chunk, set initial score, store meta
+                rrf_scores[key] = {"score": 0.0, "meta": chunk["meta"]}
+            rrf_scores[key]["score"] += 1.0 / (rrf_k + rank)
+
+    #sort descending by score
+    sorted_descending = sorted(rrf_scores.items(), key=lambda pair: pair[1]["score"], reverse=True)
+
+    #slice top k
+    top_k = sorted_descending[:k]
+
+    #build and return list
+
+    combined_list = []
+    for chunk_text, data in top_k:
+        combined_list.append({"doc": chunk_text, "meta": data["meta"], "dist": data["score"]})
+
+    return combined_list
+
+
+

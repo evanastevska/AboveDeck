@@ -19,13 +19,20 @@ def main():
     
     records = chunk.build_records()
     model = SentenceTransformer('sentence-transformers/all-MiniLM-L6-v2')
-    collection = embed.build_store(records, model)
-
     query_text = "In what season does Jax cheat on Stassi?"
 
-    result = retrieve.retrieve_dense(collection, model, query_text, k=5, season=None)
+    #dense retrieval
+    collection = embed.build_store(records, model)
+    #dense_result = retrieve.retrieve_dense(collection, model, query_text, k=5, season=None)
 
-    response = generate.generate(query_text, result, client, model_name="gemini-3.6-flash")
+    #sparse retrieval
+    bm25_index = retrieve.build_bm25_index(records)
+    #sparese_result = retrieve.retrieve_bm25(bm25_index, records, query_text, k=5, season=None)
+
+    hybrid_result = retrieve.retrieve_hybrid(collection, model, bm25_index, records, query_text, k=5, season=None, rrf_k=60)
+    print(hybrid_result)
+
+    response = generate.generate(query_text, hybrid_result, client, model_name="gemini-3.6-flash")
     print(response)
 
 
