@@ -220,3 +220,68 @@ def retrieve_hybrid(collection, model, bm25_index, records, query_text, k=5, sea
 
 
 
+def rerank(retrieved, query_text, reranker_model, top_n=None):
+    """
+    Re-score retrieved chunks with a cross-encoder, then re-sort.
+
+    Args:
+        retrieved:       list of dicts from ANY retriever (retrieve_dense,
+                         retrieve_bm25, or retrieve_hybrid) — same
+                         [{"doc": ..., "meta": ..., "dist": ...}, ...] shape
+        query_text:      the user's original question
+        reranker_model:  a loaded CrossEncoder model
+        top_n:           how many to keep after reranking. If None, return
+                         all of them (just re-sorted). This lets you
+                         retrieve a bigger set (say k=20) and cut to the
+                         best 5 after reranking.
+
+    Returns:
+        list[dict] same shape, but re-sorted by cross-encoder score
+        (and possibly shorter if top_n is set).
+        "dist" is replaced with the cross-encoder score.
+
+    How a cross-encoder works (plain language):
+        The embedding model (MiniLM) encodes the query and each chunk
+        SEPARATELY, then compares vectors. Fast but rough.
+
+        A cross-encoder reads the query and chunk TOGETHER as one input, like reading a question and a paragraph side by side. It
+        outputs a single relevance score. Much slower (one model call
+        per chunk), but more accurate because it sees both texts at once.
+
+        That's why it's a RE-ranker , use fast retrieval first to
+        get candidates, then the cross-encoder to re-score just those few.
+
+    How to use it:
+        reranker_model.predict() takes a list of [query, text] pairs
+        and returns one score per pair. Higher = more relevant.
+    """
+    #a list of [query_text, chunk_text] pairs
+    #one pair for each item in retrieved
+    #(the query is the SAME every time , it's the chunk that changes)
+    query_chunk_pairs = [[query_text, item["doc"]] for item in retrieved]
+
+
+    #reranker_model.predict(pairs) to get scores
+    #returns a list/array of floats, one per pair, same order
+    scores = reranker_model.predict(query_chunk_pairs)
+
+    #attach each score to its original result
+    for i, hit in enumerate(retrieved):
+        hit["score"] = scores[i]
+
+    #sort by score descending
+    sorted_descending = sorted(retrieved, key=lambda hit: hit["score"], reverse=True)
+
+    #if top_n is set, slice to top_n
+    if top_n is not None:
+        sorted_descending = sorted_descending[:top_n]
+    
+    
+    combined_list = []
+    for hit in sorted_descending:
+        combined_list.append({"doc": hit["doc"], "meta": hit["meta"], "dist": hit["score"]})
+
+    return combined_list
+
+
+
