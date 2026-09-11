@@ -251,7 +251,7 @@ def rerank(retrieved, query_text, reranker_model, top_n=None):
         (and possibly shorter if top_n is set).
         "dist" is replaced with the cross-encoder score.
 
-    How a cross-encoder works (plain language):
+    How a cross-encoder works:
         The embedding model (MiniLM) encodes the query and each chunk
         SEPARATELY, then compares vectors. Fast but rough.
 
