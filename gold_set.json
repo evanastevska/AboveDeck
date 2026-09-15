@@ -1,0 +1,653 @@
+[
+    {
+        "id": 1,
+        "query_text": "What is the name of the yacht in Below Deck Season 10?",
+        "answer_text": "St. David",
+        "query_type": "simple_lookup",
+        "gold_chunk_ids": ["Below_Deck_Season_10.txt-4"]
+    },
+    {
+        "id": 2,
+        "query_text": "How many episodes are in Below Deck Mediterranean Season 1?",
+        "answer_text": "13",
+        "query_type": "simple_lookup",
+        "gold_chunk_ids": ["Below_Deck_Mediterranean_Season_1.txt-0"]
+    },
+    {
+        "id": 3,
+        "query_text": "What was the name of the yacht in Below Deck Mediterranean Season 1?",
+        "answer_text": "Ionian Princess",
+        "query_type": "simple_lookup",
+        "gold_chunk_ids": ["Below_Deck_Mediterranean_Season_1.txt-1"]
+    },
+    {
+        "id": 4,
+        "query_text": "Where was Below Deck Mediterranean Season 1 filmed?",
+        "answer_text": "in the Mediterranean Sea around the Greek islands",
+        "query_type": "simple_lookup",
+        "gold_chunk_ids": ["Below_Deck_Mediterranean_Season_1.txt-1"]
+    },
+    {
+        "id": 5,
+        "query_text": "Who was the chef in Below Deck Mediterranean Season 1?",
+        "answer_text": "Ben Robinson",
+        "query_type": "temporal",
+        "gold_chunk_ids": ["Below_Deck_Mediterranean_Season_1.txt-0", "Below_Deck_Mediterranean_Season_1.txt-1"]
+    },
+    {
+        "id": 6,
+        "query_text": "Who was the captain in Below Deck Mediterranean Season 1?",
+        "answer_text": "Mark Howard",
+        "query_type": "temporal",
+        "gold_chunk_ids": ["Below_Deck_Mediterranean_Season_1.txt-0"]
+    },
+    {
+        "id": 7,
+        "query_text": "Who was the captain when Ben and Hannah went on a date in Below Deck Mediterranean?",
+        "answer_text": "Mark Howard",
+        "query_type": "multi_hop",
+        "gold_chunk_ids": ["Below_Deck_Mediterranean_Season_1.txt-0", "Below_Deck_Mediterranean_Season_1.txt-6"]
+    },
+    {
+        "id": 8,
+        "query_text": "What episode does Jax cheat on Stassi?",
+        "answer_text": "This never happens in the corpus. Jax and Stassi are Vanderpump Rules characters, not Below Deck",
+        "query_type": "negation",
+        "gold_chunk_ids": []
+    },
+    {
+        "id": 9,
+        "query_text": "What is the name of the yacht in Below Deck Season 4?",
+        "answer_text": "Valor",
+        "query_type": "simple_lookup",
+        "gold_chunk_ids": ["Below_Deck_Season_4.txt-0", "Below_Deck_Season_4.txt-1"]
+    },
+    {
+        "id": 10,
+        "query_text": "Where was Below Deck Season 4 filmed?",
+        "answer_text": "US Virgin Islands",
+        "query_type": "simple_lookup",
+        "gold_chunk_ids": ["Below_Deck_Season_4.txt-1"]
+    },
+    {
+        "id": 11,
+        "query_text": "Who replaced Eddie Lucas as bosun in Below Deck Season 4?",
+        "answer_text": "Kelley Johnson",
+        "query_type": "simple_lookup",
+        "gold_chunk_ids": ["Below_Deck_Season_4.txt-0"]
+    },
+    {
+        "id": 12,
+        "query_text": "Who was the chief stewardess in Below Deck Season 4?",
+        "answer_text": "Kate Chastain",
+        "query_type": "temporal",
+        "gold_chunk_ids": ["Below_Deck_Season_4.txt-0"]
+    },
+    {
+        "id": 13,
+        "query_text": "Who was the bosun in Below Deck Season 4?",
+        "answer_text": "Kelley Johnson",
+        "query_type": "temporal",
+        "gold_chunk_ids": ["Below_Deck_Season_4.txt-0"]
+    },
+    {
+        "id": 14,
+        "query_text": "Who was the captain when Kyle and Sierra went on a date in Below Deck?",
+        "answer_text": "Lee Rosbach",
+        "query_type": "multi_hop",
+        "gold_chunk_ids": ["Below_Deck_Season_4.txt-0", "Below_Deck_Season_4.txt-7"]
+    },
+    {
+        "id": 15,
+        "query_text": "What yacht were they on when Dean Slover returned for his third charter trip?",
+        "answer_text": "Valor",
+        "query_type": "multi_hop",
+        "gold_chunk_ids": ["Below_Deck_Season_4.txt-8", "Below_Deck_Season_4.txt-0", "Below_Deck_Season_4.txt-1"]
+    },
+    {
+        "id": 16,
+        "query_text": "What is the name of the yacht in Below Deck Mediterranean Season 7?",
+        "answer_text": "Home",
+        "query_type": "simple_lookup",
+        "gold_chunk_ids": ["Below_Deck_Mediterranean_Season_7.txt-0", "Below_Deck_Mediterranean_Season_7.txt-1"]
+    },
+    {
+        "id": 17,
+        "query_text": "How many episodes are in Below Deck Mediterranean Season 7?",
+        "answer_text": "20",
+        "query_type": "simple_lookup",
+        "gold_chunk_ids": ["Below_Deck_Mediterranean_Season_7.txt-0", "Below_Deck_Mediterranean_Season_7.txt-1"]
+    },
+    {
+        "id": 18,
+        "query_text": "Where was Below Deck Mediterranean Season 7 filmed?",
+        "answer_text": "Malta",
+        "query_type": "simple_lookup",
+        "gold_chunk_ids": ["Below_Deck_Mediterranean_Season_7.txt-1"]
+    },
+    {
+        "id": 19,
+        "query_text": "Who was the chef in Below Deck Mediterranean Season 7?",
+        "answer_text": "David White",
+        "query_type": "temporal",
+        "gold_chunk_ids": ["Below_Deck_Mediterranean_Season_7.txt-2"]
+    },
+    {
+        "id": 20,
+        "query_text": "Who was the chief stewardess in Below Deck Mediterranean Season 7?",
+        "answer_text": "Natasha Webb",
+        "query_type": "temporal",
+        "gold_chunk_ids": ["Below_Deck_Mediterranean_Season_7.txt-2"]
+    },
+    {
+        "id": 21,
+        "query_text": "Who was the captain when Kyle injured his ankle falling down the stairs?",
+        "answer_text": "Sandy Yawn",
+        "query_type": "multi_hop",
+        "gold_chunk_ids": ["Below_Deck_Mediterranean_Season_7.txt-11", "Below_Deck_Mediterranean_Season_7.txt-0", "Below_Deck_Mediterranean_Season_7.txt-2"]
+    },
+    {
+        "id": 22,
+        "query_text": "What yacht were they on when two NFL players came aboard as charter guests?",
+        "answer_text": "Home",
+        "query_type": "multi_hop",
+        "gold_chunk_ids": ["Below_Deck_Mediterranean_Season_7.txt-12", "Below_Deck_Mediterranean_Season_7.txt-0", "Below_Deck_Mediterranean_Season_7.txt-1"]
+    },
+    {
+        "id": 23,
+        "query_text": "What role did Courtney Veale have in Below Deck Mediterranean Season 7?",
+        "answer_text": "Deckhand / Lead Deckhand",
+        "query_type": "distractor_heavy",
+        "gold_chunk_ids": ["Below_Deck_Mediterranean_Season_7.txt-3", "Below_Deck_Mediterranean_Season_7.txt-0"]
+    },
+    {
+        "id": 24,
+        "query_text": "What is the name of the yacht in Below Deck Mediterranean Season 5?",
+        "answer_text": "The Wellington",
+        "query_type": "simple_lookup",
+        "gold_chunk_ids": ["Below_Deck_Mediterranean_Season_5.txt-1"]
+    },
+    {
+        "id": 25,
+        "query_text": "Where was Below Deck Mediterranean Season 5 filmed?",
+        "answer_text": "Mallorca",
+        "query_type": "simple_lookup",
+        "gold_chunk_ids": ["Below_Deck_Mediterranean_Season_5.txt-1"]
+    },
+    {
+        "id": 26,
+        "query_text": "How many episodes are in Below Deck Mediterranean Season 5?",
+        "answer_text": "22",
+        "query_type": "simple_lookup",
+        "gold_chunk_ids": ["Below_Deck_Mediterranean_Season_5.txt-0"]
+    },
+    {
+        "id": 27,
+        "query_text": "Who was the bosun in Below Deck Mediterranean Season 5?",
+        "answer_text": "Malia White",
+        "query_type": "temporal",
+        "gold_chunk_ids": ["Below_Deck_Mediterranean_Season_5.txt-0", "Below_Deck_Mediterranean_Season_5.txt-2"]
+    },
+    {
+        "id": 28,
+        "query_text": "Who was the captain in Below Deck Mediterranean Season 5?",
+        "answer_text": "Sandy Yawn",
+        "query_type": "temporal",
+        "gold_chunk_ids": ["Below_Deck_Mediterranean_Season_5.txt-0", "Below_Deck_Mediterranean_Season_5.txt-2"]
+    },
+    {
+        "id": 29,
+        "query_text": "What yacht was Hannah Ferrier fired on?",
+        "answer_text": "The Wellington",
+        "query_type": "multi_hop",
+        "gold_chunk_ids": ["Below_Deck_Mediterranean_Season_5.txt-5", "Below_Deck_Mediterranean_Season_5.txt-1"]
+    },
+    {
+        "id": 30,
+        "query_text": "Who replaced Hannah Ferrier as chief stewardess in Below Deck Mediterranean Season 5?",
+        "answer_text": "Christine \"Bugsy\" Drake",
+        "query_type": "distractor_heavy",
+        "gold_chunk_ids": ["Below_Deck_Mediterranean_Season_5.txt-0", "Below_Deck_Mediterranean_Season_5.txt-1"]
+    },
+    {
+        "id": 31,
+        "query_text": "How many chefs served on Below Deck Mediterranean Season 5?",
+        "answer_text": "Two",
+        "query_type": "distractor_heavy",
+        "gold_chunk_ids": ["Below_Deck_Mediterranean_Season_5.txt-2", "Below_Deck_Mediterranean_Season_5.txt-1"]
+    },
+    {
+        "id": 32,
+        "query_text": "Was Hannah Ferrier the chief stewardess for all of Below Deck Mediterranean Season 5?",
+        "answer_text": "She was not chief stewardess in Season 5, she was fired in episode 12",
+        "query_type": "negation",
+        "gold_chunk_ids": ["Below_Deck_Mediterranean_Season_5.txt-5"]
+    },
+    {
+        "id": 33,
+        "query_text": "Where was Below Deck Season 6 filmed?",
+        "answer_text": "Tahiti",
+        "query_type": "simple_lookup",
+        "gold_chunk_ids": ["Below_Deck_Season_6.txt-1", "Below_Deck_Season_6.txt-4"]
+    },
+    {
+        "id": 34,
+        "query_text": "Who was the first male stew on Below Deck?",
+        "answer_text": "Josiah Carter",
+        "query_type": "simple_lookup",
+        "gold_chunk_ids": ["Below_Deck_Season_6.txt-0"]
+    },
+    {
+        "id": 35,
+        "query_text": "What was the largest motor yacht to appear on Below Deck?",
+        "answer_text": "My Seanna",
+        "query_type": "simple_lookup",
+        "gold_chunk_ids": ["Below_Deck_Season_6.txt-1"]
+    },
+    {
+        "id": 36,
+        "query_text": "Who was the chef in Below Deck Season 6?",
+        "answer_text": "Adrian Martin",
+        "query_type": "temporal",
+        "gold_chunk_ids": ["Below_Deck_Season_6.txt-2"]
+    },
+    {
+        "id": 37,
+        "query_text": "Who was the bosun at the start of Below Deck Season 6?",
+        "answer_text": "Chandler Brooks",
+        "query_type": "temporal",
+        "gold_chunk_ids": ["Below_Deck_Season_6.txt-0", "Below_Deck_Season_6.txt-2"]
+    },
+    {
+        "id": 38,
+        "query_text": "What yacht were they on when Ashton had a life-threatening accident?",
+        "answer_text": "My Seanna",
+        "query_type": "multi_hop",
+        "gold_chunk_ids": ["Below_Deck_Season_6.txt-8", "Below_Deck_Season_6.txt-1"]
+    },
+    {
+        "id": 39,
+        "query_text": "Who was the captain when they suspect the guests of being mobsters?",
+        "answer_text": "Captain Lee",
+        "query_type": "multi_hop",
+        "gold_chunk_ids": ["Below_Deck_Season_6.txt-9", "Below_Deck_Season_6.txt-0"]
+    },
+    {
+        "id": 40,
+        "query_text": "Who replaced Chandler Brooks as bosun in Below Deck Season 6?",
+        "answer_text": "Ross Inia",
+        "query_type": "distractor_heavy",
+        "gold_chunk_ids": ["Below_Deck_Season_6.txt-2"]
+    },
+    {
+        "id": 41,
+        "query_text": "What season of Below Deck did Caroline Bedol serve as chief stewardess?",
+        "answer_text": "Never. She was third stewardess, not chief",
+        "query_type": "negation",
+        "gold_chunk_ids": ["Below_Deck_Season_6.txt-2"]
+    },
+    {
+        "id": 42,
+        "query_text": "Where was Below Deck Season 7 filmed?",
+        "answer_text": "Phuket, Thailand",
+        "query_type": "simple_lookup",
+        "gold_chunk_ids": ["Below_Deck_Season_7.txt-1"]
+    },
+    {
+        "id": 43,
+        "query_text": "How many episodes are in Below Deck Season 7?",
+        "answer_text": "20",
+        "query_type": "simple_lookup",
+        "gold_chunk_ids": ["Below_Deck_Season_7.txt-0"]
+    },
+    {
+        "id": 44,
+        "query_text": "What was Below Deck Season 7 the last season to feature?",
+        "answer_text": "Kate Chastain",
+        "query_type": "simple_lookup",
+        "gold_chunk_ids": ["Below_Deck_Season_7.txt-0", "Below_Deck_Season_7.txt-1"]
+    },
+    {
+        "id": 45,
+        "query_text": "Who was the chef in Below Deck Season 7?",
+        "answer_text": "Kevin Dobson",
+        "query_type": "temporal",
+        "gold_chunk_ids": ["Below_Deck_Season_7.txt-1"]
+    },
+    {
+        "id": 46,
+        "query_text": "Who was the bosun in Below Deck Season 7?",
+        "answer_text": "Ashton Pienaar",
+        "query_type": "temporal",
+        "gold_chunk_ids": ["Below_Deck_Season_7.txt-0", "Below_Deck_Season_7.txt-2"]
+    },
+    {
+        "id": 47,
+        "query_text": "What yacht were they on when a charter guest is inappropriate toward Simone?",
+        "answer_text": "Valor",
+        "query_type": "multi_hop",
+        "gold_chunk_ids": ["Below_Deck_Season_7.txt-1", "Below_Deck_Season_7.txt-7"]
+    },
+    {
+        "id": 48,
+        "query_text": "Who was the captain when Kate promotes Courtney to second stew?",
+        "answer_text": "Captain Lee",
+        "query_type": "multi_hop",
+        "gold_chunk_ids": ["Below_Deck_Season_7.txt-0", "Below_Deck_Season_7.txt-8"]
+    },
+    {
+        "id": 49,
+        "query_text": "Why did Rhylee Gerber return to Below Deck Season 7?",
+        "answer_text": "She replaced Abbi Murphy after Abbi quit.",
+        "query_type": "distractor_heavy",
+        "gold_chunk_ids": ["Below_Deck_Season_7.txt-0"]
+    },
+    {
+        "id": 50,
+        "query_text": "How many appearances did the yacht Valor make on Below Deck?",
+        "answer_text": "Three",
+        "query_type": "distractor_heavy",
+        "gold_chunk_ids": ["Below_Deck_Season_7.txt-0", "Below_Deck_Season_5.txt-0", "Below_Deck_Season_4.txt-0"]
+    },
+    {
+        "id": 51,
+        "query_text": "What season of Below Deck was Ashton Pienaar the lead deckhand?",
+        "answer_text": "Never on this show in that role, he was deckhand in S6 and bosun in S7, never lead deckhand.",
+        "query_type": "negation",
+        "gold_chunk_ids": ["Below_Deck_Season_7.txt-0"]
+    },
+    {
+        "id": 52,
+        "query_text": "Where was Below Deck Season 9 filmed?",
+        "answer_text": "St. Kitts (Caribbean Sea)",
+        "query_type": "simple_lookup",
+        "gold_chunk_ids": ["Below_Deck_Season_9.txt-1"]
+    },
+    {
+        "id": 53,
+        "query_text": "How many episodes are in Below Deck Season 9?",
+        "answer_text": "15",
+        "query_type": "simple_lookup",
+        "gold_chunk_ids": ["Below_Deck_Season_9.txt-0"]
+    },
+    {
+        "id": 54,
+        "query_text": "What was the name of the yacht in Below Deck Season 9?",
+        "answer_text": "My Seanna",
+        "query_type": "simple_lookup",
+        "gold_chunk_ids": ["Below_Deck_Season_9.txt-1"]
+    },
+    {
+        "id": 55,
+        "query_text": "Who was the chief stewardess in Below Deck Season 9?",
+        "answer_text": "Heather Chase",
+        "query_type": "temporal",
+        "gold_chunk_ids": ["Below_Deck_Season_9.txt-2"]
+    },
+    {
+        "id": 56,
+        "query_text": "Who was the first officer in Below Deck Season 9?",
+        "answer_text": "Eddie Lucas",
+        "query_type": "temporal",
+        "gold_chunk_ids": ["Below_Deck_Season_9.txt-0"]
+    },
+    {
+        "id": 57,
+        "query_text": "Who was the chef when U.S. Navy couples renewed their vows onboard?",
+        "answer_text": "Rachel Hargrove",
+        "query_type": "multi_hop",
+        "gold_chunk_ids": ["Below_Deck_Season_9.txt-0", "Below_Deck_Season_9.txt-9"]
+    },
+    {
+        "id": 58,
+        "query_text": "Who was the temporary captain when Eddie gets frustrated by the hands-on managerial style?",
+        "answer_text": "Sean Meagher",
+        "query_type": "multi_hop",
+        "gold_chunk_ids": ["Below_Deck_Season_9.txt-0", "Below_Deck_Season_9.txt-4"]
+    },
+    {
+        "id": 59,
+        "query_text": "Why did Sean Meagher only captain Below Deck Season 9 for two episodes?",
+        "answer_text": "He was a temporary replacement while Captain Lee had health issues.",
+        "query_type": "distractor_heavy",
+        "gold_chunk_ids": ["Below_Deck_Season_9.txt-0"]
+    },
+    {
+        "id": 60,
+        "query_text": "Was Fraser Olender the chief steward in Below Deck Season 9?",
+        "answer_text": "He was 2nd steward in S9.",
+        "query_type": "negation",
+        "gold_chunk_ids": ["Below_Deck_Season_9.txt-0", "Below_Deck_Season_9.txt-1"]
+    },
+    {
+        "id": 61,
+        "query_text": "What is the name of the yacht in Below Deck Mediterranean Season 8?",
+        "answer_text": "Mustique",
+        "query_type": "simple_lookup",
+        "gold_chunk_ids": ["Below_Deck_Mediterranean_Season_8.txt-1"]
+    },
+    {
+        "id": 62,
+        "query_text": "Where was Below Deck Mediterranean Season 8 filmed?",
+        "answer_text": "Italy",
+        "query_type": "simple_lookup",
+        "gold_chunk_ids": ["Below_Deck_Mediterranean_Season_8.txt-1"]
+    },
+    {
+        "id": 63,
+        "query_text": "How many episodes are in Below Deck Mediterranean Season 8?",
+        "answer_text": "16",
+        "query_type": "simple_lookup",
+        "gold_chunk_ids": ["Below_Deck_Mediterranean_Season_8.txt-0"]
+    },
+    {
+        "id": 64,
+        "query_text": "Who was the chef in Below Deck Mediterranean Season 8?",
+        "answer_text": "Jack Luby",
+        "query_type": "temporal",
+        "gold_chunk_ids": ["Below_Deck_Mediterranean_Season_8.txt-2"]
+    },
+    {
+        "id": 65,
+        "query_text": "Who was the chief stewardess in Below Deck Mediterranean Season 8?",
+        "answer_text": "Tumi Mhlongo",
+        "query_type": "temporal",
+        "gold_chunk_ids": ["Below_Deck_Mediterranean_Season_8.txt-1"]
+    },
+    {
+        "id": 66,
+        "query_text": "On which yacht is it when Tumi and Natalya grapple with differences in management styles?",
+        "answer_text": "Mustique",
+        "query_type": "multi_hop",
+        "gold_chunk_ids": ["Below_Deck_Mediterranean_Season_8.txt-1", "Below_Deck_Mediterranean_Season_8.txt-6"]
+    },
+    {
+        "id": 67,
+        "query_text": "Who was the captain when the bosun was caught texting a familiar chief stew?",
+        "answer_text": "Sandy Yawn",
+        "query_type": "multi_hop",
+        "gold_chunk_ids": ["Below_Deck_Mediterranean_Season_8.txt-11", "Below_Deck_Mediterranean_Season_8.txt-0"]
+    },
+    {
+        "id": 68,
+        "query_text": "What role did Natalya Scudder have in Below Deck Mediterranean Season 8?",
+        "answer_text": "Temp Chief Stewardess (ep 1\u20132), then 3rd Stewardess (ep 3\u20139).",
+        "query_type": "distractor_heavy",
+        "gold_chunk_ids": ["Below_Deck_Mediterranean_Season_8.txt-0"]
+    },
+    {
+        "id": 69,
+        "query_text": "How many different bosuns served in Below Deck Mediterranean Season 8?",
+        "answer_text": "Two: Ruan Irving (ep 1 only) then Luka Brunton took over.",
+        "query_type": "distractor_heavy",
+        "gold_chunk_ids": ["Below_Deck_Mediterranean_Season_8.txt-3"]
+    },
+    {
+        "id": 70,
+        "query_text": "Was Kyle Viljoen the chief steward in Below Deck Mediterranean Season 8?",
+        "answer_text": "No, he was 2nd steward.",
+        "query_type": "negation",
+        "gold_chunk_ids": ["Below_Deck_Mediterranean_Season_8.txt-1"]
+    },
+    {
+        "id": 71,
+        "query_text": "Where was Below Deck Season 10 filmed?",
+        "answer_text": "St. Lucia",
+        "query_type": "simple_lookup",
+        "gold_chunk_ids": ["Below_Deck_Season_10.txt-1"]
+    },
+    {
+        "id": 72,
+        "query_text": "How many crew members appeared in Below Deck Season 10?",
+        "answer_text": "13",
+        "query_type": "simple_lookup",
+        "gold_chunk_ids": ["Below_Deck_Season_10.txt-1"]
+    },
+    {
+        "id": 73,
+        "query_text": "Who was the chef when Captain Lee had to leave St. David due to his injury?",
+        "answer_text": "Rachel Hargrove",
+        "query_type": "multi_hop",
+        "gold_chunk_ids": ["Below_Deck_Season_10.txt-1", "Below_Deck_Season_10.txt-6"]
+    },
+    {
+        "id": 74,
+        "query_text": "What yacht was Captain Sandy captaining when Camille was fired?",
+        "answer_text": "St. David",
+        "query_type": "multi_hop",
+        "gold_chunk_ids": ["Below_Deck_Season_10.txt-4", "Below_Deck_Season_10.txt-8"]
+    },
+    {
+        "id": 75,
+        "query_text": "Who was the chief steward in Below Deck Season 10?",
+        "answer_text": "Fraser Olender",
+        "query_type": "temporal",
+        "gold_chunk_ids": ["Below_Deck_Season_10.txt-1"]
+    },
+    {
+        "id": 76,
+        "query_text": "Was Sandy Yawn the captain for the entire Below Deck Season 10?",
+        "answer_text": "No, she captained episodes 5\u201314 only. Lee started and finished the season.",
+        "query_type": "negation",
+        "gold_chunk_ids": ["Below_Deck_Season_10.txt-2"]
+    },
+    {
+        "id": 77,
+        "query_text": "Was Below Deck Season 10 Rachel Hargrove's first season on the show?",
+        "answer_text": "No, it was her final season, she also appeared in Seasons 8 and 9.",
+        "query_type": "negation",
+        "gold_chunk_ids": ["Below_Deck_Season_10.txt-0", "Below_Deck_Season_10.txt-1"]
+    },
+    {
+        "id": 78,
+        "query_text": "Did Captain Lee leave Below Deck Season 10 because he was fired?",
+        "answer_text": "No, he left due to mobility issues from back surgery.",
+        "query_type": "negation",
+        "gold_chunk_ids": ["Below_Deck_Season_10.txt-0"]
+    },
+    {
+        "id": 79,
+        "query_text": "Which Below Deck captain replaced Captain Lee in Season 10?",
+        "answer_text": "Sandy Yawn",
+        "query_type": "distractor_heavy",
+        "gold_chunk_ids": ["Below_Deck_Season_10.txt-0"]
+    },
+    {
+        "id": 80,
+        "query_text": "Where was Below Deck Season 11 filmed?",
+        "answer_text": "Grenada",
+        "query_type": "simple_lookup",
+        "gold_chunk_ids": ["Below_Deck_Season_11.txt-1"]
+    },
+    {
+        "id": 81,
+        "query_text": "Which season of Below Deck was the first without Captain Lee Rosbach?",
+        "answer_text": "Season 11",
+        "query_type": "simple_lookup",
+        "gold_chunk_ids": ["Below_Deck_Season_11.txt-0"]
+    },
+    {
+        "id": 82,
+        "query_text": "Who was the chef when Fraser kisses one of the crew?",
+        "answer_text": "Anthony Iracane",
+        "query_type": "multi_hop",
+        "gold_chunk_ids": ["Below_Deck_Season_11.txt-8", "Below_Deck_Season_11.txt-2"]
+    },
+    {
+        "id": 83,
+        "query_text": "Who was chief steward when Capt. Kerry docks St. David for the first time?",
+        "answer_text": "Fraser Olender",
+        "query_type": "multi_hop",
+        "gold_chunk_ids": ["Below_Deck_Season_11.txt-5", "Below_Deck_Season_11.txt-0", "Below_Deck_Season_11.txt-1"]
+    },
+    {
+        "id": 84,
+        "query_text": "Was Captain Lee Rosbach in Below Deck Season 11?",
+        "answer_text": "No, this was the first season he didn't appear. He was replaced by Kerry Titheradge.",
+        "query_type": "negation",
+        "gold_chunk_ids": ["Below_Deck_Season_11.txt-0"]
+    },
+    {
+        "id": 85,
+        "query_text": "Was Ben Willoughby the bosun for all of Below Deck Season 11?",
+        "answer_text": "No, he was lead deckhand ep 1\u20137, then became bosun ep 7\u201317 after Jared left.",
+        "query_type": "negation",
+        "gold_chunk_ids": ["Below_Deck_Season_11.txt-3"]
+    },
+    {
+        "id": 86,
+        "query_text": "Did Chef Anthony Iracane cook for the entire Below Deck Season 11?",
+        "answer_text": "No, he served episodes 1\u201312 and was replaced by Nick Tatlock for episodes 13\u201317.",
+        "query_type": "negation",
+        "gold_chunk_ids": ["Below_Deck_Season_11.txt-2"]
+    },
+    {
+        "id": 87,
+        "query_text": "Did Below Deck Season 11 set the record for most crew members in a season?",
+        "answer_text": "No, it tied Season 10's record of 13, it didn't break it.",
+        "query_type": "negation",
+        "gold_chunk_ids": ["Below_Deck_Season_11.txt-1"]
+    },
+    {
+        "id": 88,
+        "query_text": "What role did Ben Willoughby have in Below Deck Season 11?",
+        "answer_text": "Lead Deckhand (ep 1\u20137), then Bosun (ep 7\u201317).",
+        "query_type": "distractor_heavy",
+        "gold_chunk_ids": ["Below_Deck_Season_11.txt-3"]
+    },
+    {
+        "id": 89,
+        "query_text": "Where was Below Deck Season 1 filmed?",
+        "answer_text": "St. Maarten",
+        "query_type": "simple_lookup",
+        "gold_chunk_ids": ["Below_Deck_Season_1.txt-0"]
+    },
+    {
+        "id": 90,
+        "query_text": "Who was the chef when the charter guests had an onboard wedding?",
+        "answer_text": "Ben Robinson.",
+        "query_type": "multi_hop",
+        "gold_chunk_ids": ["Below_Deck_Season_1.txt-4", "Below_Deck_Season_1.txt-5", "Below_Deck_Season_1.txt-1"]
+    },
+    {
+        "id": 91,
+        "query_text": "Who was the captain when Adrienne finally reaches her breaking point?",
+        "answer_text": "Lee Rosbach.",
+        "query_type": "multi_hop",
+        "gold_chunk_ids": ["Below_Deck_Season_1.txt-5", "Below_Deck_Season_1.txt-6", "Below_Deck_Season_1.txt-0", "Below_Deck_Season_1.txt-1"]
+    },
+    {
+        "id": 92,
+        "query_text": "Was Eddie Lucas the bosun in Below Deck Season 1?",
+        "answer_text": "No, he was First Deckhand. He became bosun in later seasons.",
+        "query_type": "negation",
+        "gold_chunk_ids": ["Below_Deck_Season_1.txt-2"]
+    },
+    {
+        "id": 93,
+        "query_text": "Was Kate Chastain in Below Deck Season 1?",
+        "answer_text": "No, the chief stewardess was Adrienne Gang. Kate didn't join until a later season.",
+        "query_type": "negation",
+        "gold_chunk_ids": ["Below_Deck_Season_1.txt-1"]
+    }
+]
