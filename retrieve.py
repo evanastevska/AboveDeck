@@ -36,12 +36,13 @@ def retrieve_dense(collection, model, query_text, k=5, season=None, show=None):
     docs = results["documents"][0]
     metas = results["metadatas"][0]
     dists = results["distances"][0]
+    chunk_ids= results["ids"][0]
 
 
     #package each (doc, meta, dist) into one dict, collect into a list.
     combined_list = [
-        {"doc": doc, "meta": meta, "dist": dist} 
-        for doc, meta, dist in zip(docs, metas, dists)
+        {"doc": doc, "meta": meta, "dist": dist, "chunk_id": chunk_id} 
+        for doc, meta, dist, chunk_id in zip(docs, metas, dists, chunk_ids)
     ]
 
     
@@ -144,8 +145,9 @@ def retrieve_bm25(bm25_index, records, query_text, k=5, season=None, show=None):
     for position, score in top_k:
         doc = records[position]["text"]
         meta = {"source_page": records[position]["source_page"], "show": records[position]["show"], "season":records[position]["season"]}
+        chunk_id = records[position]["chunk_id"]
 
-        combined_list.append({"doc": doc, "meta": meta, "dist": score})
+        combined_list.append({"doc": doc, "meta": meta, "dist": score, "chunk_id": chunk_id})
 
     return combined_list
 
@@ -200,7 +202,7 @@ def retrieve_hybrid(collection, model, bm25_index, records, query_text, k=5, sea
         key = chunk["doc"]
         if key not in rrf_scores:
             # first time seeing this chunk, set initial score, store meta
-            rrf_scores[key] = {"score": 0.0, "meta": chunk["meta"]}
+            rrf_scores[key] = {"score": 0.0, "meta": chunk["meta"], "chunk_id":chunk["chunk_id"]}
         rrf_scores[key]["score"] += 1.0 / (rrf_k + rank)
 
 
@@ -212,7 +214,7 @@ def retrieve_hybrid(collection, model, bm25_index, records, query_text, k=5, sea
             key = chunk["doc"]
             if key not in rrf_scores:
                 # first time seeing this chunk, set initial score, store meta
-                rrf_scores[key] = {"score": 0.0, "meta": chunk["meta"]}
+                rrf_scores[key] = {"score": 0.0, "meta": chunk["meta"], "chunk_id":chunk["chunk_id"]}
             rrf_scores[key]["score"] += 1.0 / (rrf_k + rank)
 
     #sort descending by score
@@ -225,7 +227,7 @@ def retrieve_hybrid(collection, model, bm25_index, records, query_text, k=5, sea
 
     combined_list = []
     for chunk_text, data in top_k:
-        combined_list.append({"doc": chunk_text, "meta": data["meta"], "dist": data["score"]})
+        combined_list.append({"doc": chunk_text, "meta": data["meta"], "dist": data["score"], "chunk_id":data["chunk_id"]})
 
     return combined_list
 
@@ -290,7 +292,7 @@ def rerank(retrieved, query_text, reranker_model, top_n=None):
     
     combined_list = []
     for hit in sorted_descending:
-        combined_list.append({"doc": hit["doc"], "meta": hit["meta"], "dist": hit["score"]})
+        combined_list.append({"doc": hit["doc"], "meta": hit["meta"], "dist": hit["score"], "chunk_id": hit["chunk_id"]})
 
     return combined_list
 
