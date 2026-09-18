@@ -7,7 +7,8 @@ Compares pipeline output against the gold set to produce two kinds of scores:
 
 This file is the bridge between the pipeline (ablation.py) and the gold set (gold_set.json).
 """
-
+import ablation
+import json
 
 def recall_at_k(retrieved_ids, gold_ids):
     """
@@ -38,12 +39,12 @@ def recall_at_k(retrieved_ids, gold_ids):
         if gold_id in hashmap_retrieved_id:
             score += 1
 
-    
+
     recall = score / len(gold_ids)
 
     return recall
 
-    
+
 
 def run_retrieval_eval(config, client):
     """
@@ -70,4 +71,33 @@ def run_retrieval_eval(config, client):
 
     TODO: implement
     """
-    pass
+    #1. load gold_set.json
+    with open("gold_set.json", "r", encoding="utf-8") as file:
+        gold_set = json.load(file)
+
+    per_question = []
+
+
+    for gold_entry in gold_set:
+        query_text = gold_entry.get("query_text")
+
+        response, retrieval_result = ablation.run_config(config, query_text, client)
+
+        retrieved_chunk_ids = [chunk["chunk_id"] for chunk in retrieval_result]
+
+        retrieved_recall = recall_at_k(retrieved_chunk_ids, gold_entry["gold_chunk_ids"])
+
+        per_question.append({"id": gold_entry["id"], "query_type": gold_entry["query_type"], "recall": retrieved_recall})
+
+    valid_scores = [q["recall"] for q in per_question if q.get("recall") is not None]
+
+    if valid_scores:
+        mean_recall = sum(valid_scores) / len(valid_scores)
+    else:
+        mean_recall  = 0.0
+
+    return {
+        "mean_recall": mean_recall,
+        "per_question": per_question
+    }
+
