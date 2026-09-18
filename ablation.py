@@ -141,7 +141,17 @@ def run_query(config, query_text, client, pipeline):
 
 
 
-config = {
+
+
+
+
+if __name__ == "__main__":
+    load_dotenv()
+
+    api_key = os.getenv("GOOGLE_API_KEY")
+    client = genai.Client(api_key=api_key)
+
+    config = {
     "chunk_size": 800,
     "chunking_strategy": "fixed",
     "embedding_model": "all-MiniLM-L6-v2",
@@ -150,15 +160,6 @@ config = {
     "reranker":"off",
     "query_transform":"raw"
 }
-
-
-
-if __name__ == "__main__":
-    load_dotenv()
-
-    api_key = os.getenv("GOOGLE_API_KEY")
-
-    client = genai.Client(api_key=api_key)
 
     query_text="How many episodes are in Below Deck Mediterranean Season 1?"
 

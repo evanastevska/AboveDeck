@@ -10,6 +10,10 @@ This file is the bridge between the pipeline (ablation.py) and the gold set (gol
 import ablation
 import json
 
+import os
+from google import genai
+from dotenv import load_dotenv
+
 def recall_at_k(retrieved_ids, gold_ids):
     """
     Compute Recall@k for a single question.
@@ -77,11 +81,13 @@ def run_retrieval_eval(config, client):
 
     per_question = []
 
+    pipeline = ablation.setup_pipeline(config)
+
 
     for gold_entry in gold_set:
         query_text = gold_entry.get("query_text")
 
-        response, retrieval_result = ablation.run_config(config, query_text, client)
+        response, retrieval_result = ablation.run_query(config, query_text, client, pipeline)
 
         retrieved_chunk_ids = [chunk["chunk_id"] for chunk in retrieval_result]
 
@@ -100,4 +106,24 @@ def run_retrieval_eval(config, client):
         "mean_recall": mean_recall,
         "per_question": per_question
     }
+
+if __name__ == "__main__":
+    load_dotenv()
+    
+    api_key = os.getenv("GOOGLE_API_KEY")
+
+    client = genai.Client(api_key=api_key)
+
+    config = {
+        "chunk_size": 800,
+        "chunking_strategy": "fixed",
+        "embedding_model": "all-MiniLM-L6-v2",
+        "top_k":5,
+        "retrieval_method":"bm25",
+        "reranker":"off",
+        "query_transform":"raw"
+    }
+
+    retrieval_eval = run_retrieval_eval(config, client)
+    print(retrieval_eval)
 
