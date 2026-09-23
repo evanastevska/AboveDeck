@@ -210,33 +210,40 @@ def run_judge_eval(config, client, openai_client):
     with open("gold_set.json", "r", encoding="utf-8") as file:
             gold_set = json.load(file)
 
-    gold_set = gold_set[:3]
-
     per_question = []
 
     pipeline = ablation.setup_pipeline(config)
 
     for gold_entry in gold_set:
-            query_text = gold_entry.get("query_text")
-            response, retrieval_result = ablation.run_query(config, query_text, client, pipeline, return_generation=True)
-   
-            retrieved_chunk_ids = [chunk["doc"] for chunk in retrieval_result]
+        query_text = gold_entry.get("query_text")
+        response, retrieval_result = ablation.run_query(config, query_text, client, pipeline, return_generation=True)
 
-            context_string = "\n\n".join(retrieved_chunk_ids)
+        retrieved_chunk_ids = [chunk["doc"] for chunk in retrieval_result]
 
-            print(f"Q: {query_text}")
-            print(f"Generated: {response}")
-            print(f"Gold: {gold_entry['answer_text']}")
-            print("---")
+        context_string = "\n\n".join(retrieved_chunk_ids)
 
-            if response is None:
-                per_question.append({"id": gold_entry["id"], "query_type": gold_entry["query_type"], "scores": None})
-                continue
+        if response is None:
+            per_question.append({
+                "id": gold_entry["id"],
+                "query_type": gold_entry["query_type"],
+                "scores": None,
+                "context": context_string,
+                "generated": None,
+                "gold": gold_entry["answer_text"]
+            })
+            continue
 
-            judge_answer_result = judge_answer(query=query_text, generated_answer=response, gold_answer=gold_entry["answer_text"], context=context_string, openai_client=openai_client)
+        judge_answer_result = judge_answer(query=query_text, generated_answer=response, gold_answer=gold_entry["answer_text"], context=context_string, openai_client=openai_client)
 
-            per_question.append({"id": gold_entry["id"], "query_type": gold_entry["query_type"], "scores": judge_answer_result})
-   
+        per_question.append({
+            "id": gold_entry["id"],
+            "query_type": gold_entry["query_type"],
+            "scores": judge_answer_result,
+            "context": context_string,
+            "generated": response,
+            "gold": gold_entry["answer_text"]
+        })
+
     valid_faithful = [q["scores"]["faithfulness"] for q in per_question if q["scores"] is not None]
     valid_correct = [q["scores"]["correctness"] for q in per_question if q["scores"] is not None]
     valid_complete = [q["scores"]["completeness"] for q in per_question if q["scores"] is not None]
@@ -290,8 +297,15 @@ if __name__ == "__main__":
     print(f"  Correctness:  {judge_eval['mean_correctness']:.3f}")
     print(f"  Completeness: {judge_eval['mean_completeness']:.3f}")
 
+    validation_ids = {1,2,4,5,7,8,9,10,14,15,20,21,22,26,30,32,37,38,42,46,47,57,59,60,75,77,84,85,88,92}
+
     for q in judge_eval["per_question"]:
-        print(f"  ID {q['id']}: {q['scores']}")
+        if q["id"] in validation_ids:
+            print(f"\n=== ID {q['id']} ===")
+            print(f"Context chunks:\n{q['context']}")
+            print(f"\nGenerated: {q.get('generated', 'N/A')}")
+            print(f"Gold: {q.get('gold', 'N/A')}")
+            print("---")
 
 
 
