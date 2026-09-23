@@ -92,7 +92,7 @@ def setup_pipeline(config):
 
 
 
-def run_query(config, query_text, client, pipeline):
+def run_query(config, query_text, client, pipeline, return_generation=True):
     """
     Run a single query through an already-set-up pipeline.
 
@@ -133,7 +133,13 @@ def run_query(config, query_text, client, pipeline):
         pass
 
     #5. generate
-    response = generate.generate(query_text, retrieval_result, client, model_name="gemini-3.6-flash")
+    if return_generation:
+        try:
+            response = generate.generate(query_text, retrieval_result, client, model_name="gemini-3.6-flash")
+        except Exception as e:
+            response = None
+    else:
+        response = None
 
     #6. return
     return response, retrieval_result
@@ -152,14 +158,14 @@ if __name__ == "__main__":
     client = genai.Client(api_key=api_key)
 
     config = {
-    "chunk_size": 800,
-    "chunking_strategy": "fixed",
-    "embedding_model": "all-MiniLM-L6-v2",
-    "top_k":5,
-    "retrieval_method":"bm25",
-    "reranker":"off",
-    "query_transform":"raw"
-}
+        "chunk_size": 800,
+        "chunking_strategy": "fixed",
+        "embedding_model": "all-MiniLM-L6-v2",
+        "top_k":5,
+        "retrieval_method":"bm25",
+        "reranker":"off",
+        "query_transform":"raw"
+    }
 
     query_text="How many episodes are in Below Deck Mediterranean Season 1?"
 

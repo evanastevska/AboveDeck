@@ -212,7 +212,7 @@
     {
         "id": 31,
         "query_text": "How many chefs served on Below Deck Mediterranean Season 5?",
-        "answer_text": "Two",
+        "answer_text": "Two chefs served.",
         "query_type": "distractor_heavy",
         "gold_chunk_ids": ["Below_Deck_Mediterranean_Season_5.txt-2", "Below_Deck_Mediterranean_Season_5.txt-1"]
     },
