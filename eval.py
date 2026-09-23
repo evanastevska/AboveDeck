@@ -12,6 +12,7 @@ import json
 
 import os
 from google import genai
+from openai import OpenAI
 from dotenv import load_dotenv
 
 def recall_at_k(retrieved_ids, gold_ids):
@@ -177,6 +178,76 @@ def judge_answer(query, generated_answer, gold_answer, context, openai_client):
 
 
 
+def run_judge_eval(config, client, openai_client):
+    """
+    Run LLM-as-judge scoring across the full gold set for one pipeline config.
+
+    Args:
+        config:         the ablation config dict (all 7 keys)
+        client:         the genai.Client (for generation)
+        openai_client:  an OpenAI client (for the judge)
+
+    Returns:
+        dict with:
+            - "mean_faithfulness": average across all scored questions
+            - "mean_correctness": average across all scored questions
+            - "mean_completeness": average across all scored questions
+            - "per_question": list of {"id", "query_type", "scores"} for every question
+              (scores is the dict from judge_answer, or None if it failed)
+
+    Steps:
+        1. Load gold_set.json
+        2. Setup the pipeline once
+        3. Loop over every gold entry:
+            a. Run the pipeline WITH generation (return_generation=True)
+            b. Join the retrieved chunk texts into one context string
+            c. Call judge_answer with query, generated answer, gold answer, context
+            d. Store the result
+        4. Average each dimension (skip Nones)
+        5. Return the results dict
+
+    """
+    with open("gold_set.json", "r", encoding="utf-8") as file:
+            gold_set = json.load(file)
+
+    gold_set = gold_set[:3]
+
+    per_question = []
+
+    pipeline = ablation.setup_pipeline(config)
+
+    for gold_entry in gold_set:
+            query_text = gold_entry.get("query_text")
+            response, retrieval_result = ablation.run_query(config, query_text, client, pipeline, return_generation=True)
+   
+            retrieved_chunk_ids = [chunk["doc"] for chunk in retrieval_result]
+
+            context_string = "\n\n".join(retrieved_chunk_ids)
+
+            print(f"Q: {query_text}")
+            print(f"Generated: {response}")
+            print(f"Gold: {gold_entry['answer_text']}")
+            print("---")
+
+            if response is None:
+                per_question.append({"id": gold_entry["id"], "query_type": gold_entry["query_type"], "scores": None})
+                continue
+
+            judge_answer_result = judge_answer(query=query_text, generated_answer=response, gold_answer=gold_entry["answer_text"], context=context_string, openai_client=openai_client)
+
+            per_question.append({"id": gold_entry["id"], "query_type": gold_entry["query_type"], "scores": judge_answer_result})
+   
+    valid_faithful = [q["scores"]["faithfulness"] for q in per_question if q["scores"] is not None]
+    valid_correct = [q["scores"]["correctness"] for q in per_question if q["scores"] is not None]
+    valid_complete = [q["scores"]["completeness"] for q in per_question if q["scores"] is not None]
+
+    return {
+        "mean_faithfulness": sum(valid_faithful) / len(valid_faithful) if valid_faithful else 0.0,
+        "mean_correctness": sum(valid_correct) / len(valid_correct) if valid_correct else 0.0,
+        "mean_completeness": sum(valid_complete) / len(valid_complete) if valid_complete else 0.0,
+        "per_question": per_question
+    }
+
 
 
 
@@ -184,33 +255,43 @@ if __name__ == "__main__":
     load_dotenv()
 
     api_key = os.getenv("GOOGLE_API_KEY")
-
-    client = genai.Client(api_key=api_key)
+    retrieval_client = genai.Client(api_key=api_key)
+    judge_client = OpenAI()
 
     config = {
         "chunk_size": 800,
         "chunking_strategy": "fixed",
         "embedding_model": "all-MiniLM-L6-v2",
-        "top_k":5,
-        "retrieval_method":"dense",
-        "reranker":"off",
-        "query_transform":"raw"
+        "top_k": 5,
+        "retrieval_method": "dense",
+        "reranker": "off",
+        "query_transform": "raw"
     }
 
-    retrieval_eval = run_retrieval_eval(config, client)
-    print(retrieval_eval)
+    #Retrieval eval
+    #retrieval_eval = run_retrieval_eval(config, retrieval_client)
+    #print(retrieval_eval)
 
-    #break down by query type
-    from collections import defaultdict
+    #from collections import defaultdict
+    #by_type = defaultdict(list)
+    #for q in retrieval_eval["per_question"]:
+    #    if q["recall"] is not None:
+    #        by_type[q["query_type"]].append(q["recall"])
+    #print(f"\nOverall mean Recall@k: {retrieval_eval['mean_recall']:.3f}")
+    #print(f"{'Query Type':<20} {'Count':>5} {'Mean Recall':>12}")
+    #print("-" * 40)
+    #for qtype, scores in sorted(by_type.items()):
+    #    print(f"{qtype:<20} {len(scores):>5} {sum(scores)/len(scores):>12.3f}")
 
-    by_type = defaultdict(list)
-    for q in retrieval_eval["per_question"]:
-        if q["recall"] is not None:
-            by_type[q["query_type"]].append(q["recall"])
+    #Judge eval
+    judge_eval = run_judge_eval(config, retrieval_client, judge_client)
+    print(f"\nJudge Scores:")
+    print(f"  Faithfulness: {judge_eval['mean_faithfulness']:.3f}")
+    print(f"  Correctness:  {judge_eval['mean_correctness']:.3f}")
+    print(f"  Completeness: {judge_eval['mean_completeness']:.3f}")
 
-    print(f"\nOverall mean Recall@k: {retrieval_eval['mean_recall']:.3f}")
-    print(f"{'Query Type':<20} {'Count':>5} {'Mean Recall':>12}")
-    print("-" * 40)
-    for qtype, scores in sorted(by_type.items()):
-        print(f"{qtype:<20} {len(scores):>5} {sum(scores)/len(scores):>12.3f}")
+    for q in judge_eval["per_question"]:
+        print(f"  ID {q['id']}: {q['scores']}")
+
+
 

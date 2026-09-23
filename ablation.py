@@ -134,10 +134,16 @@ def run_query(config, query_text, client, pipeline, return_generation=True):
 
     #5. generate
     if return_generation:
-        try:
-            response = generate.generate(query_text, retrieval_result, client, model_name="gemini-3.6-flash")
-        except Exception as e:
-            response = None
+        response = None
+        for attempt in range(3):
+            try:
+                response = generate.generate(query_text, retrieval_result, client, model_name="gemini-3.6-flash")
+                break
+            except Exception as e:
+                print(f"Generation attempt {attempt + 1} failed: {e}")
+                if attempt < 2:
+                    import time
+                    time.sleep(5)
     else:
         response = None
 
