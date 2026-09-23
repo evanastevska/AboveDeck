@@ -170,7 +170,7 @@ def judge_answer(query, generated_answer, gold_answer, context, openai_client):
         )
         result_text = response.choices[0].message.content
         scores = json.loads(result_text)
-        return sco bres
+        return scores
     except Exception as e:
         print(f"Judge failed: {e}")
         return None
