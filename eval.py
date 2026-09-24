@@ -14,6 +14,7 @@ import os
 from google import genai
 from openai import OpenAI
 from dotenv import load_dotenv
+import json as json_module
 
 def recall_at_k(retrieved_ids, gold_ids):
     """
@@ -134,6 +135,7 @@ def judge_answer(query, generated_answer, gold_answer, context, openai_client):
     3 = The answer mostly uses the context but includes minor unsupported details.
     4 = The answer is grounded in the context with only trivial rephrasing beyond it.
     5 = Every claim in the answer is directly supported by the retrieved context.
+    IMPORTANT: If the answer states that the information is not in the context, and the retrieved context indeed does not contain the answer, that is a FAITHFUL response (score 5). Do NOT penalize faithfulness for wrong or incomplete answers, that is what correctness and completeness measure. Faithfulness ONLY measures whether the answer stayed grounded in the retrieved context.
 
     Correctness (1–5): Does the generated answer match the gold answer?
     1 = The answer is completely wrong or contradicts the gold answer.
@@ -248,6 +250,14 @@ def run_judge_eval(config, client, openai_client):
     valid_correct = [q["scores"]["correctness"] for q in per_question if q["scores"] is not None]
     valid_complete = [q["scores"]["completeness"] for q in per_question if q["scores"] is not None]
 
+
+    with open("judge_results_baseline.json", "w", encoding="utf-8") as f:
+        json_module.dump({"mean_faithfulness": sum(valid_faithful) / len(valid_faithful) if valid_faithful else 0.0,
+                          "mean_correctness": sum(valid_correct) / len(valid_correct) if valid_correct else 0.0,
+                          "mean_completeness": sum(valid_complete) / len(valid_complete) if valid_complete else 0.0,
+                          "per_question": per_question}, f, indent=2)
+    print("Saved to judge_results_baseline.json")
+
     return {
         "mean_faithfulness": sum(valid_faithful) / len(valid_faithful) if valid_faithful else 0.0,
         "mean_correctness": sum(valid_correct) / len(valid_correct) if valid_correct else 0.0,
@@ -296,16 +306,6 @@ if __name__ == "__main__":
     print(f"  Faithfulness: {judge_eval['mean_faithfulness']:.3f}")
     print(f"  Correctness:  {judge_eval['mean_correctness']:.3f}")
     print(f"  Completeness: {judge_eval['mean_completeness']:.3f}")
-
-    validation_ids = {1,2,4,5,7,8,9,10,14,15,20,21,22,26,30,32,37,38,42,46,47,57,59,60,75,77,84,85,88,92}
-
-    for q in judge_eval["per_question"]:
-        if q["id"] in validation_ids:
-            print(f"\n=== ID {q['id']} ===")
-            print(f"Context chunks:\n{q['context']}")
-            print(f"\nGenerated: {q.get('generated', 'N/A')}")
-            print(f"Gold: {q.get('gold', 'N/A')}")
-            print("---")
 
 
 
