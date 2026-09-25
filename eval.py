@@ -52,7 +52,7 @@ def recall_at_k(retrieved_ids, gold_ids):
 
 
 
-def run_retrieval_eval(config, client):
+def run_retrieval_eval(config, client, pipeline=None):
     """
     Run Recall@k across the full gold set for one pipeline config.
 
@@ -82,7 +82,8 @@ def run_retrieval_eval(config, client):
 
     per_question = []
 
-    pipeline = ablation.setup_pipeline(config)
+    if pipeline is None:
+        pipeline = ablation.setup_pipeline(config)
 
 
     for gold_entry in gold_set:
@@ -180,7 +181,7 @@ def judge_answer(query, generated_answer, gold_answer, context, openai_client):
 
 
 
-def run_judge_eval(config, client, openai_client):
+def run_judge_eval(config, client, openai_client, pipeline=None):
     """
     Run LLM-as-judge scoring across the full gold set for one pipeline config.
 
@@ -214,7 +215,8 @@ def run_judge_eval(config, client, openai_client):
 
     per_question = []
 
-    pipeline = ablation.setup_pipeline(config)
+    if pipeline is None:
+        pipeline = ablation.setup_pipeline(config)
 
     for gold_entry in gold_set:
         query_text = gold_entry.get("query_text")
@@ -251,12 +253,12 @@ def run_judge_eval(config, client, openai_client):
     valid_complete = [q["scores"]["completeness"] for q in per_question if q["scores"] is not None]
 
 
-    with open("judge_results_baseline.json", "w", encoding="utf-8") as f:
-        json_module.dump({"mean_faithfulness": sum(valid_faithful) / len(valid_faithful) if valid_faithful else 0.0,
-                          "mean_correctness": sum(valid_correct) / len(valid_correct) if valid_correct else 0.0,
-                          "mean_completeness": sum(valid_complete) / len(valid_complete) if valid_complete else 0.0,
-                          "per_question": per_question}, f, indent=2)
-    print("Saved to judge_results_baseline.json")
+    #with open("judge_results_baseline.json", "w", encoding="utf-8") as f:
+    #    json_module.dump({"mean_faithfulness": sum(valid_faithful) / len(valid_faithful) if valid_faithful else 0.0,
+    #                      "mean_correctness": sum(valid_correct) / len(valid_correct) if valid_correct else 0.0,
+    #                      "mean_completeness": sum(valid_complete) / len(valid_complete) if valid_complete else 0.0,
+    #                      "per_question": per_question}, f, indent=2)
+    #print("Saved to judge_results_baseline.json")
 
     return {
         "mean_faithfulness": sum(valid_faithful) / len(valid_faithful) if valid_faithful else 0.0,
