@@ -80,6 +80,7 @@ def run_retrieval_eval(config, client, pipeline=None):
     with open("gold_set.json", "r", encoding="utf-8") as file:
         gold_set = json.load(file)
 
+
     per_question = []
 
     if pipeline is None:
@@ -212,6 +213,7 @@ def run_judge_eval(config, client, openai_client, pipeline=None):
     """
     with open("gold_set.json", "r", encoding="utf-8") as file:
             gold_set = json.load(file)
+
 
     per_question = []
 

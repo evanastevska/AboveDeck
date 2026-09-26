@@ -1,0 +1,194 @@
+[
+  {
+    "label": "baseline",
+    "config": {
+      "chunk_size": 800,
+      "chunking_strategy": "fixed",
+      "embedding_model": "all-MiniLM-L6-v2",
+      "top_k": 5,
+      "retrieval_method": "dense",
+      "reranker": "off",
+      "query_transform": "raw"
+    },
+    "recall": 0.35235507246376807,
+    "faithfulness": 4.935483870967742,
+    "correctness": 2.806451612903226,
+    "completeness": 2.795698924731183
+  },
+  {
+    "label": "bm25",
+    "config": {
+      "chunk_size": 800,
+      "chunking_strategy": "fixed",
+      "embedding_model": "all-MiniLM-L6-v2",
+      "top_k": 5,
+      "retrieval_method": "bm25",
+      "reranker": "off",
+      "query_transform": "raw"
+    },
+    "recall": 0.24094202898550726,
+    "faithfulness": 4.978494623655914,
+    "correctness": 2.3870967741935485,
+    "completeness": 2.3978494623655915
+  },
+  {
+    "label": "hybrid",
+    "config": {
+      "chunk_size": 800,
+      "chunking_strategy": "fixed",
+      "embedding_model": "all-MiniLM-L6-v2",
+      "top_k": 5,
+      "retrieval_method": "hybrid",
+      "reranker": "off",
+      "query_transform": "raw"
+    },
+    "recall": 0.3568840579710145,
+    "faithfulness": 4.978494623655914,
+    "correctness": 2.774193548387097,
+    "completeness": 2.817204301075269
+  },
+  {
+    "label": "dense+rerank",
+    "config": {
+      "chunk_size": 800,
+      "chunking_strategy": "fixed",
+      "embedding_model": "all-MiniLM-L6-v2",
+      "top_k": 5,
+      "retrieval_method": "dense",
+      "reranker": "on",
+      "query_transform": "raw"
+    },
+    "recall": 0.35235507246376807,
+    "faithfulness": 5.0,
+    "correctness": 2.817204301075269,
+    "completeness": 2.827956989247312
+  },
+  {
+    "label": "topk2",
+    "config": {
+      "chunk_size": 800,
+      "chunking_strategy": "fixed",
+      "embedding_model": "all-MiniLM-L6-v2",
+      "top_k": 2,
+      "retrieval_method": "dense",
+      "reranker": "off",
+      "query_transform": "raw"
+    },
+    "recall": 0.23278985507246377,
+    "faithfulness": 4.989247311827957,
+    "correctness": 2.3440860215053765,
+    "completeness": 2.3655913978494625
+  },
+  {
+    "label": "topk10",
+    "config": {
+      "chunk_size": 800,
+      "chunking_strategy": "fixed",
+      "embedding_model": "all-MiniLM-L6-v2",
+      "top_k": 10,
+      "retrieval_method": "dense",
+      "reranker": "off",
+      "query_transform": "raw"
+    },
+    "recall": 0.3731884057971015,
+    "faithfulness": 4.956989247311828,
+    "correctness": 2.967741935483871,
+    "completeness": 3.010752688172043
+  },
+  {
+    "label": "token128",
+    "config": {
+      "chunk_size": 128,
+      "chunking_strategy": "token",
+      "embedding_model": "all-MiniLM-L6-v2",
+      "top_k": 5,
+      "retrieval_method": "dense",
+      "reranker": "off",
+      "query_transform": "raw"
+    },
+    "recall": 0.3342391304347826,
+    "faithfulness": 4.946236559139785,
+    "correctness": 2.795698924731183,
+    "completeness": 2.795698924731183
+  },
+  {
+    "label": "token256",
+    "config": {
+      "chunk_size": 256,
+      "chunking_strategy": "token",
+      "embedding_model": "all-MiniLM-L6-v2",
+      "top_k": 5,
+      "retrieval_method": "dense",
+      "reranker": "off",
+      "query_transform": "raw"
+    },
+    "recall": 0.3342391304347826,
+    "faithfulness": 4.956989247311828,
+    "correctness": 2.795698924731183,
+    "completeness": 2.795698924731183
+  },
+  {
+    "label": "hybrid+rerank",
+    "config": {
+      "chunk_size": 800,
+      "chunking_strategy": "fixed",
+      "embedding_model": "all-MiniLM-L6-v2",
+      "top_k": 5,
+      "retrieval_method": "hybrid",
+      "reranker": "on",
+      "query_transform": "raw"
+    },
+    "recall": 0.34057971014492755,
+    "faithfulness": 4.967741935483871,
+    "correctness": 2.752688172043011,
+    "completeness": 2.752688172043011
+  },
+  {
+    "label": "dense+topk10+rerank",
+    "config": {
+      "chunk_size": 800,
+      "chunking_strategy": "fixed",
+      "embedding_model": "all-MiniLM-L6-v2",
+      "top_k": 10,
+      "retrieval_method": "dense",
+      "reranker": "on",
+      "query_transform": "raw"
+    },
+    "recall": 0.36231884057971014,
+    "faithfulness": 4.989247311827957,
+    "correctness": 2.989247311827957,
+    "completeness": 2.989247311827957
+  },
+  {
+    "label": "hybrid+topk10",
+    "config": {
+      "chunk_size": 800,
+      "chunking_strategy": "fixed",
+      "embedding_model": "all-MiniLM-L6-v2",
+      "top_k": 10,
+      "retrieval_method": "hybrid",
+      "reranker": "off",
+      "query_transform": "raw"
+    },
+    "recall": 0.4039855072463768,
+    "faithfulness": 4.967741935483871,
+    "correctness": 3.064516129032258,
+    "completeness": 3.118279569892473
+  },
+  {
+    "label": "hybrid+topk10+rerank",
+    "config": {
+      "chunk_size": 800,
+      "chunking_strategy": "fixed",
+      "embedding_model": "all-MiniLM-L6-v2",
+      "top_k": 10,
+      "retrieval_method": "hybrid",
+      "reranker": "on",
+      "query_transform": "raw"
+    },
+    "recall": 0.4039855072463768,
+    "faithfulness": 4.989130434782608,
+    "correctness": 3.097826086956522,
+    "completeness": 3.097826086956522
+  }
+]

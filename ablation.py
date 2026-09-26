@@ -59,7 +59,8 @@ def setup_pipeline(config):
     #1. chunk
     build_records_results = chunk.build_records(
         chunk_size=config["chunk_size"],
-        chunking_strategy=config["chunking_strategy"]
+        chunking_strategy=config["chunking_strategy"],
+        embedding_model=config["embedding_model"]
     )
 
 

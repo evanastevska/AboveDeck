@@ -33,18 +33,27 @@ def setup_key(config):
 #all configs to sweep
 #one axis at a time, everything else pinned to baseline
 CONFIGS = [
-    make_config("baseline"),
+    #make_config("baseline"),
 
     #retrieval method axis
-    make_config("bm25", retrieval_method="bm25"),
-    make_config("hybrid", retrieval_method="hybrid"),
+    #make_config("bm25", retrieval_method="bm25"),
+    #make_config("hybrid", retrieval_method="hybrid"),
 
     #reranker axis (dense is the baseline retrieval method)
-    make_config("dense+rerank", reranker="on"),
+    #make_config("dense+rerank", reranker="on"),
 
     #top-k axis
-    make_config("topk2", top_k=2),
-    make_config("topk10", top_k=10),
+    #make_config("topk2", top_k=2),
+    #make_config("topk10", top_k=10),
+
+    #tokens
+    #make_config("token128", chunk_size=128, chunking_strategy="token"),
+    #make_config("token256", chunk_size=256, chunking_strategy="token"),
+
+    make_config("hybrid+rerank", retrieval_method="hybrid", reranker="on"),
+    make_config("dense+topk10+rerank", top_k=10, reranker="on"),
+    make_config("hybrid+topk10", retrieval_method="hybrid", top_k=10),
+    make_config("hybrid+topk10+rerank", retrieval_method="hybrid", top_k=10, reranker="on"),
 ]
 
 
@@ -87,10 +96,18 @@ def run_sweep():
 
     all_results = []
 
+    # load previous results so new configs append instead of overwrite
+    if os.path.exists("sweep_results.json"):
+        with open("sweep_results.json", "r", encoding="utf-8") as f:
+            all_results = json.load(f)
+
     #loop over groups
     #setup once per group, run all configs in that group
     for key, config_list in config_map.items():
-        first_config = config_list[0][1]
+        first_config = config_list[0][1].copy()
+        # if any config in this group uses the reranker, load it during setup
+        if any(config["reranker"] == "on" for _, config in config_list):
+            first_config["reranker"] = "on"
         pipeline = ablation.setup_pipeline(first_config)
 
         for label, config in config_list:
@@ -112,6 +129,10 @@ def run_sweep():
                 "correctness": judge_result["mean_correctness"],
                 "completeness": judge_result["mean_completeness"],
             })
+
+            # save after every config so a crash doesn't lose progress
+            with open("sweep_results.json", "w", encoding="utf-8") as f:
+                json.dump(all_results, f, indent=2)
 
     #4.save
     with open("sweep_results.json", "w", encoding="utf-8") as f:
