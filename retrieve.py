@@ -13,13 +13,13 @@ def retrieve_dense(collection, model, query_text, k=5, season=None, show=None):
 
     #embed query_text. hand it to Chroma as a LIST (one query)
     query_embedding = model.encode([query_text]).tolist()
-    
+
     query_args = {
         "query_embeddings": query_embedding,
         "n_results": k
     }
-    
-    
+
+
     if season is not None and show is not None:
         query_args["where"] = {"$and": [{"season": season}, {"show": show}]}
     elif season is not None:
@@ -41,11 +41,11 @@ def retrieve_dense(collection, model, query_text, k=5, season=None, show=None):
 
     #package each (doc, meta, dist) into one dict, collect into a list.
     combined_list = [
-        {"doc": doc, "meta": meta, "dist": dist, "chunk_id": chunk_id} 
+        {"doc": doc, "meta": meta, "dist": dist, "chunk_id": chunk_id}
         for doc, meta, dist, chunk_id in zip(docs, metas, dists, chunk_ids)
     ]
 
-    
+
     return combined_list
 
 
@@ -67,7 +67,7 @@ def build_bm25_index(records):
     IMPORTANT: the index only knows documents by POSITION (0, 1, 2...).
     It doesn't store your text or metadata. So the caller must keep
     the original records list alongside the index, position i in the
-    index corresponds to records[i]. 
+    index corresponds to records[i].
     """
     #pull the "text" out of each record and tokenize it
     tokenized_text = [record["text"].lower().split() for record in records]
@@ -197,7 +197,7 @@ def retrieve_hybrid(collection, model, bm25_index, records, query_text, k=5, sea
     #for each chunk, store its meta so can return it later
     #start at 1 because rank = 1 best
     rrf_scores = {}
-    
+
     for rank, chunk in enumerate(ranked_results_dense, start=1):
         key = chunk["doc"]
         if key not in rrf_scores:
@@ -288,8 +288,8 @@ def rerank(retrieved, query_text, reranker_model, top_n=None):
     #if top_n is set, slice to top_n
     if top_n is not None:
         sorted_descending = sorted_descending[:top_n]
-    
-    
+
+
     combined_list = []
     for hit in sorted_descending:
         combined_list.append({"doc": hit["doc"], "meta": hit["meta"], "dist": hit["score"], "chunk_id": hit["chunk_id"]})

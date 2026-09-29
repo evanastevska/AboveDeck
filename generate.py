@@ -18,7 +18,7 @@ def generate(query_text, retrieved, client, model_name):
     """
     #build a context block from retrieved.
     #loop through the hits. For each one, label it with its source(source_page + season from meta) and include the chunk text.
-    #join into one big string the model can read. 
+    #join into one big string the model can read.
 
     context_segments = []
 

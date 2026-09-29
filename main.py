@@ -17,7 +17,7 @@ def main():
     api_key = os.getenv("GOOGLE_API_KEY")
 
     client = genai.Client(api_key=api_key)
-    
+
     records = chunk.build_records()
 
     model = SentenceTransformer('sentence-transformers/all-MiniLM-L6-v2')

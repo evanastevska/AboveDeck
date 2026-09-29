@@ -98,10 +98,10 @@ def get_page_text(title):
     TODO: build params, call_api, extract the text
     """
 
-    
+
     PARAMS = {
-        "action": "parse", 
-        "prop": "wikitext", 
+        "action": "parse",
+        "prop": "wikitext",
         "format": "json",
         "page": title
     }
@@ -114,7 +114,7 @@ def get_page_text(title):
 
 
 
-    
+
 def save_page(title, text, out_dir="corpus"):
     """
     Write one page's text to disk as a .txt file.
@@ -149,7 +149,7 @@ def main():
         list.append(f"Below Deck Mediterranean Season {n}")
 
     for title in list:
-        text = get_page_text(title)  
+        text = get_page_text(title)
         save_page(title, text)
         print(f"Saved: {title}")
 
@@ -161,9 +161,8 @@ if __name__ == "__main__":
 
 
 
-    
-    
 
 
 
-    
+
+

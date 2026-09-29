@@ -44,7 +44,7 @@ def search_chunks(records, search_term):
 
         start = max(0, pos - margin)
         end = min(len(text), pos + len(search_term) + margin)
-        
+
         print(f"Match found in Record ID {record['chunk_id']}: {text[start:end]}")
 
 
